@@ -17,8 +17,8 @@ const config: Config = {
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: "Burgerstifung-Rossing", // Usually your GitHub org/user name.
-  projectName: "unser-dorf-hat-zukunft", // Usually your repo name.
+  organizationName: "buergerstiftung-roessing", // Usually your GitHub org/user name.
+  projectName: "unser-dorf-hat-zukunft-2025", // Usually your repo name.
 
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
@@ -54,7 +54,7 @@ const config: Config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            "https://github.com/Burgerstiftung-Rossing/unser-dorf-hat-zukunft-2025/tree/main/",
+            "https://github.com/buergerstiftung-roessing/unser-dorf-hat-zukunft-2025/edit/main/",
         },
         blog: false,
         theme: {
