@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: udhz
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: udhz
+  template:
+    metadata:
+      labels:
+        app: udhz
+    spec:
+      containers:
+      - name: udhz
+        image: ghcr.io/buergerstiftung-roessing/unser-dorf-hat-zukunft-2025
+        ports:
+        - containerPort: 80
+        env:
+        - name: HOST
+          value: 0.0.0.0
+        - name: PORT
+          value: '80'
+      enableServiceLinks: false
+      imagePullSecrets:
+        - name: ghcr-pull
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: udhz
+spec:
+  selector:
+    app: udhz
+  ports:
+  - name: p80
+    port: 80
+    targetPort: 80

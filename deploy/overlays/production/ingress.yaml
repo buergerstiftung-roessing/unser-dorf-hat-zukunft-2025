@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: udhz
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt
+spec:
+  ingressClassName: traefik
+  tls:
+  - hosts:
+    - udhz.xn--rssing-wxa.de
+    secretName: udhz-tls
+  rules:
+  - host: udhz.xn--rssing-wxa.de
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: udhz
+            port:
+              number: 80
