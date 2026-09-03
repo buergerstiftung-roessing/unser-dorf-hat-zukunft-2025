@@ -32,7 +32,7 @@ jobs:
         id: dist
         working-directory: build
         run: |
-          echo "${ github.sha }" > .dist-commit
+          echo "${{ github.sha }}" > .dist-commit
           git init -q -b production-dist
           git config user.name  "deploy-bot"
           git config user.email "deploy-bot@users.noreply.github.com"
