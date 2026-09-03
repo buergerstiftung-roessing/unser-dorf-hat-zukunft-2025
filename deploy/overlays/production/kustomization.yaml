@@ -1,15 +1,11 @@
 # Production overlay of this site. Argo CD (Application `udhz` in
-# levino/server-config) reads THIS directory — from the branch `production`,
+# levino/server-config) reads THIS directory from the branch `production`,
 # which the deploy job writes after every build: main's tree plus the pinned
-# image tag(s) below. Humans never push to `production`.
-#
-# The tag is the commit SHA of the running build. Never `latest`.
+# `levinkeller.de/dist-commit` annotation in workloads.yaml. Humans never push
+# to `production` or `production-dist`.
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: udhz
 resources:
   - workloads.yaml
   - ingress.yaml
-images:
-  - name: ghcr.io/buergerstiftung-roessing/unser-dorf-hat-zukunft-2025
-    newTag: "0000000000000000000000000000000000000000"

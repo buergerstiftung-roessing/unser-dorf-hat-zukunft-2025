@@ -1,3 +1,11 @@
+# udhz: the site is built by CI and published as the branch `production-dist`
+# of buergerstiftung-roessing/unser-dorf-hat-zukunft-2025; the init container clones that branch at pod start, the main
+# container is a public runtime image and never changes. The annotation
+# `levinkeller.de/dist-commit` is rewritten by the deploy job on every publish,
+# which is what makes the pod restart and fetch the new output. A pod that
+# restarts on its own uses whatever `github-app-token` holds at that moment
+# (refreshed every 45 min by cluster/github-app-tokens); the token is only
+# needed for private repos and only at start.
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,20 +22,51 @@ spec:
     metadata:
       labels:
         app: udhz
+      annotations:
+        levinkeller.de/dist-commit: "0000000000000000000000000000000000000000"
     spec:
+      enableServiceLinks: false
+      initContainers:
+      - name: fetch-dist
+        image: alpine/git:2.47.2
+        env:
+        - name: REPO
+          value: "buergerstiftung-roessing/unser-dorf-hat-zukunft-2025"
+        - name: TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: github-app-token
+              key: token
+              optional: true
+        command: ["sh", "-ec"]
+        args:
+          - |
+            if [ -n "${TOKEN:-}" ]; then U="https://x-access-token:${TOKEN}@github.com/${REPO}"; else U="https://github.com/${REPO}"; fi
+            git clone --quiet --depth 1 --branch production-dist "$U" /site
+            rm -rf /site/.git
+            echo "dist $(cat /site/.dist-commit 2>/dev/null || echo '?')"
+        volumeMounts:
+        - name: site
+          mountPath: /site
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities: { drop: ["ALL"] }
       containers:
       - name: udhz
-        image: ghcr.io/buergerstiftung-roessing/unser-dorf-hat-zukunft-2025
+        image: nginx:1.27-alpine
         ports:
         - containerPort: 80
-        env:
-        - name: HOST
-          value: 0.0.0.0
-        - name: PORT
-          value: '80'
-      enableServiceLinks: false
-      imagePullSecrets:
-        - name: ghcr-pull
+        volumeMounts:
+        - name: site
+          mountPath: /usr/share/nginx/html
+          readOnly: true
+        readinessProbe:
+          tcpSocket: { port: 80 }
+          initialDelaySeconds: 2
+          periodSeconds: 5
+      volumes:
+      - name: site
+        emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
