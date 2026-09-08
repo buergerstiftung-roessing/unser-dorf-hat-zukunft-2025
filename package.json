@@ -16,9 +16,9 @@
     "update-package-lock": "npm i --package-lock-only --workspaces false"
   },
   "dependencies": {
-    "@docusaurus/core": "^3.5.2",
-    "@docusaurus/plugin-ideal-image": "^3.5.2",
-    "@docusaurus/preset-classic": "^3.5.2",
+    "@docusaurus/core": "^3.10.2",
+    "@docusaurus/plugin-ideal-image": "^3.10.2",
+    "@docusaurus/preset-classic": "^3.10.2",
     "@mdx-js/react": "^3.0.0",
     "@vercel/edge": "^1.1.2",
     "clsx": "^2.0.0",
