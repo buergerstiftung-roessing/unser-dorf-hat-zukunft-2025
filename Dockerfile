@@ -1,6 +1,6 @@
 # Static site: build with Node, serve with nginx. Built by .github/workflows/deploy.yml
 # on every push to main; the cluster runs the resulting image.
-FROM node:22-alpine AS builder
+FROM node:26-alpine AS builder
 WORKDIR /usr/src/app
 COPY package.json package-lock.json ./
 RUN npm ci
