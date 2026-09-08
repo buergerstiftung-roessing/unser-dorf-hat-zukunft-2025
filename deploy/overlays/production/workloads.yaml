@@ -42,6 +42,15 @@ spec:
         args:
           - |
             if [ -n "${TOKEN:-}" ]; then U="https://x-access-token:${TOKEN}@github.com/${REPO}"; else U="https://github.com/${REPO}"; fi
+            # /site is an emptyDir: it belongs to the pod, not the container,
+            # so a RESTARTED init container still finds the previous run's
+            # clone in it and `git clone` dies with "destination path already
+            # exists and is not an empty directory" -- forever, since the
+            # directory never gets any emptier. That is not hypothetical: the
+            # k3s restart on 2026-09-07 bounced this container in three sites
+            # at once and left them in Init:CrashLoopBackOff with 250 restarts
+            # and a 503 for a day. Start from empty every time.
+            find /site -mindepth 1 -maxdepth 1 -exec rm -rf {} +
             git clone --quiet --depth 1 --branch production-dist "$U" /site
             rm -rf /site/.git
             echo "dist $(cat /site/.dist-commit 2>/dev/null || echo '?')"
