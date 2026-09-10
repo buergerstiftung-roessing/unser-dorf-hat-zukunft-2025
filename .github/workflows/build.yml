@@ -1,0 +1,40 @@
+# Repo: buergerstiftung-roessing/unser-dorf-hat-zukunft-2025
+# Ziel: .github/workflows/build.yml -- der daraus entstehende Check heisst `build`.
+#
+# Baut die Seite bei jedem Pull Request und bei jedem Push auf main.
+#
+# Warum es das gibt: der Deploy-Workflow baut erst NACH dem Merge. Als am
+# 2026-09-08 ein automatisch gemergtes Docusaurus-Minor-Update (3.9.2 -> 3.10.2)
+# die Config-Option `future.experimental_faster` in `future.faster` umbenannte,
+# schlug deshalb erst der Deploy fehl - auf main, mit bereits gemergtem Stand,
+# und die Seite blieb auf dem alten Build stehen. Dieser Check faengt so etwas
+# im PR ab, bevor er gemergt wird. Er sollte im Ruleset als Pflicht-Check fuer
+# main eingetragen sein.
+#
+# Node 22, obwohl `engines.node` in der package.json noch `>=18.0` sagt: das
+# Feld stammt aus der Docusaurus-Vorlage und ist veraltet - Docusaurus 3.10
+# verlangt mindestens Node 20. 22 ist ausserdem das, was der Deploy-Workflow
+# dieses Repos und die Schwester-Repos fahren; beide Workflows sollen dieselbe
+# Laufzeit benutzen, sonst prueft der Check etwas anderes als der Deploy baut.
+name: Build
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm run typecheck
