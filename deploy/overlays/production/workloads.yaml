@@ -23,7 +23,7 @@ spec:
       labels:
         app: udhz
       annotations:
-        levinkeller.de/dist-commit: "0000000000000000000000000000000000000000"
+        levinkeller.de/dist-commit: "de7601e9f1eeee06e371186298a6b5c621a04626"
     spec:
       enableServiceLinks: false
       initContainers:
