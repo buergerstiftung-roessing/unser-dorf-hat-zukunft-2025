@@ -96,6 +96,16 @@ updates:
     labels:
       - dependencies
     open-pull-requests-limit: 20
+    ignore:
+      # TypeScript 7 hat die Option `baseUrl` entfernt (TS5102).
+      # `@docusaurus/tsconfig` setzt sie weiterhin, und weil `baseUrl` relativ
+      # zu der Datei aufgeloest wird, in der es steht, muss ein erbendes
+      # tsconfig es ohnehin selbst noch einmal setzen -- abwaehlen kann man es
+      # nicht. `npm run typecheck` scheitert mit TS7 deshalb unabhaengig davon,
+      # was in unserer tsconfig.json steht. Wieder entfernen, sobald Docusaurus
+      # eine TS7-taugliche tsconfig ausliefert (dann faellt dieser Block weg).
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
     groups:
       # Ein Sammel-PR fuer alle Minor-/Patch-Version-Updates. Majors fehlen hier
       # absichtlich -- die holt weiter unten die Gruppe `majors` ab.
