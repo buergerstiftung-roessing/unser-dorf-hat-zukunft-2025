@@ -23,7 +23,7 @@ spec:
       labels:
         app: udhz
       annotations:
-        levinkeller.de/dist-commit: "0000000000000000000000000000000000000000"
+        levinkeller.de/dist-commit: "00edb37a63f5804cf57f3348b8cc8aa80ba92463"
     spec:
       # Eigener User-Namespace: root im Container ist auf dem Host kein root.
       hostUsers: false
